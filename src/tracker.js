@@ -27,13 +27,16 @@ export const tracker = Rx.Observable.create(observer => {
     colorTracker.setMinGroupSize(minGroupSize);
     
     colorTracker.on('track', function(event) {
-        const coordinates = getPlaygroundCoordinates(event.data);
-        if (coordinates) {
+        const data = event.data.map(c => ({ x: c.x + c.width/2, y: c.y + c.height/2 }))
+        const corners = calculateCorners(data);               
+        if (corners) {
+            const trackables = calculateTrackables(data, corners);
             observer.next({
-                topLeft: coordinates.topLeft,
-                topRight: coordinates.topRight,
-                bottomLeft: coordinates.bottomLeft,
-                bottomRight: coordinates.bottomRight
+                topLeft: corners[0],
+                topRight: corners[1],
+                bottomLeft: corners[3],
+                bottomRight: corners[2],
+                trackables: trackables
             });
         }
     });
@@ -76,12 +79,10 @@ function registerColor(name, r, g, b) {
 }
 
 
-function getPlaygroundCoordinates(coordinates) {
-  if(coordinates.length < 4) {
+function calculateCorners(data) {
+  if(data.length < 4) {
     return undefined;
   }
-  
-  var data = coordinates.map(c => ({ x: c.x + c.width/2, y: c.y + c.height/2 }))
   
   var topLeft = data
   .sort((a,b) => a.x > b.x)
@@ -107,5 +108,11 @@ var bottomRight = data
   .sort((a,b) => a.y < b.y)
   .slice(0,1)[0];
   
-  return { topLeft, topRight, bottomLeft, bottomRight };
+  return [ topLeft, topRight , bottomRight, bottomLeft ];
+}
+
+function calculateTrackables(eventData, corners) { 
+    return eventData.filter(i => {
+        return !corners.some(c => i.x === c.x && i.y === c.y)
+    });
 }

@@ -7,11 +7,16 @@ class PlaygroundRenderer extends HTMLCanvasElement {
     
     subscribeTo(observable) {
         observable.subscribe({
-            next: state => this.render(state)
+            next: state => {
+                this.renderPlayground(state);
+                if (state.trackables.length > 0) {
+                    state.trackables.forEach(i => this.renderTrackable(i));
+                }
+            }
         });
     }
     
-    render(state) {
+    renderPlayground(state) {
         this.context.clearRect(0, 0, this.width, this.height);
         this.context.beginPath();
         this.context.moveTo(state.topLeft.x,state.topLeft.y);
@@ -20,6 +25,13 @@ class PlaygroundRenderer extends HTMLCanvasElement {
         this.context.lineTo(state.bottomLeft.x,state.bottomLeft.y);
         this.context.lineTo(state.topLeft.x,state.topLeft.y);
         this.context.strokeStyle="red";
+        this.context.stroke();
+    }
+    
+    renderTrackable(trackable) {
+        this.context.beginPath();
+        this.context.arc(trackable.x,trackable.y,20,0,2*Math.PI);
+        this.context.strokeStyle="blue";
         this.context.stroke();
     }
 }
