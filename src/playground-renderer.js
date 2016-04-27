@@ -1,12 +1,12 @@
-import { tracker } from './tracker';
-
 class PlaygroundRenderer extends HTMLCanvasElement {
     createdCallback() {
         this.width = 600;
         this.height = 450;
-        this.context = this.getContext('2d');
-        
-        tracker.subscribe({
+        this.context = this.getContext('2d'); 
+    }
+    
+    subscribeTo(observable) {
+        observable.subscribe({
             next: state => this.render(state)
         });
     }

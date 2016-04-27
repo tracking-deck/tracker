@@ -1,6 +1,9 @@
 import PlaygroundRenderer from './playground-renderer';
+import { tracker } from './tracker';
 
-const canvas = new PlaygroundRenderer();
 
+let playgroundRender = new PlaygroundRenderer();
 document.querySelector('.container')
-  .appendChild(canvas);
+  .appendChild(playgroundRender);
+  
+ playgroundRender.subscribeTo(tracker);
