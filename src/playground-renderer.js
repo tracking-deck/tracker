@@ -56,12 +56,12 @@ class PlaygroundRenderer extends HTMLCanvasElement {
         this.context.lineWidth = outlineWidth;
         this.context.strokeStyle = colors.outline;
         this.context.stroke();
-
+/*
         this.drawMarkerRect(outlineWidth / 2, outlineWidth / 2);
         this.drawMarkerRect(this.width - outlineWidth / 2 - markerSize, outlineWidth / 2);
         this.drawMarkerRect(this.width - outlineWidth / 2 - markerSize, this.height - outlineWidth / 2 - markerSize);
         this.drawMarkerRect(outlineWidth / 2, this.height - outlineWidth / 2 - markerSize);
-
+*/
         //this.drawMarkerText("Zühlke");
     }
 

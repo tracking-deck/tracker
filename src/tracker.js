@@ -1,17 +1,21 @@
 import Rx from '@reactivex/rxjs/dist/cjs/Rx';
 import * as tracking from 'tracking';
+import Transformer from './transformer';
 
-const calibrationMode = true;
+const calibrationMode = false;
 const deltaMax = 3500;
 const minDimension = 17;
 const minGroupSize = 100;
 
+//Previous colors: C90000
 const colors = [
-    createColor('refColor', 'C90000')
+    createColor('refColor', '9f172d')
+
 ];
 
 export const tracker = Rx.Observable.create(observer => {
     var colorTracker = new tracking.ColorTracker();
+    console.debug("Observable created");
 
     tracking.track('#video', colorTracker, {
         camera: true
@@ -32,23 +36,51 @@ export const tracker = Rx.Observable.create(observer => {
         }));
         if (calibrationMode) {
             observer.next({
-                topLeft: {x: 0, y: 0},
-                topRight: {x: 0, y: 0},
-                bottomLeft: {x: 0, y: 0},
-                bottomRight: {x: 0, y: 0},
+                topLeft: {
+                    x: 0,
+                    y: 0
+                },
+                topRight: {
+                    x: 0,
+                    y: 0
+                },
+                bottomLeft: {
+                    x: 0,
+                    y: 0
+                },
+                bottomRight: {
+                    x: 0,
+                    y: 0
+                },
                 trackables: data
             });
         } else {
             const corners = calculateCorners(data);
+
             if (corners) {
-                const trackables = calculateTrackables(data, corners);
-                observer.next({
+                var state = {
                     topLeft: corners[0],
                     topRight: corners[1],
                     bottomLeft: corners[3],
-                    bottomRight: corners[2],
-                    trackables: trackables
-                });
+                    bottomRight: corners[2]
+                };
+
+                var t = new Transformer(
+                    [state.topLeft.x, state.topLeft.y,
+                     state.topRight.x, state.topRight.y,
+                     state.bottomRight.x, state.bottomRight.y,
+                     state.bottomLeft.x, state.bottomLeft.y
+                    ],
+                    [0, 0,    1000,0,    1000,750,   0,750]
+                );
+
+                var newState = {};
+                newState.topLeft = t.transform(state.topLeft);
+                newState.topRight = t.transform(state.topRight);
+                newState.bottomLeft = t.transform(state.bottomLeft);
+                newState.bottomRight = t.transform(state.bottomRight);
+                newState.trackables = calculateTrackables(data, corners).map(trackable => t.transform(trackable));
+                observer.next(newState);
             }
         }
     });
@@ -70,7 +102,7 @@ function registerColor(name, r1, g1, b1) {
     console.log("register color", r1, g1, b1);
 
     tracking.ColorTracker.registerColor(name, function(r2, g2, b2) {
-        if ((b2 - g2) >= (b1-g1) && (r2 - g2) >= (r1-g1)) {
+        if ((b2 - g2) >= (b1 - g1) && (r2 - g2) >= (r1 - g1)) {
             return true;
         }
 
