@@ -11,7 +11,6 @@ const colors = [
 ];
 
 export const tracker = Rx.Observable.create(observer => {
-    
     var colorTracker = new tracking.ColorTracker();
 
     tracking.track('#video', colorTracker, {
@@ -25,10 +24,10 @@ export const tracker = Rx.Observable.create(observer => {
     colorTracker.setColors(colors.map(c => c.name));
     colorTracker.setMinDimension(minDimension);
     colorTracker.setMinGroupSize(minGroupSize);
-    
+
     colorTracker.on('track', function(event) {
         const data = event.data.map(c => ({ x: c.x + c.width/2, y: c.y + c.height/2 }))
-        const corners = calculateCorners(data);               
+        const corners = calculateCorners(data);
         if (corners) {
             const trackables = calculateTrackables(data, corners);
             observer.next({
@@ -71,7 +70,7 @@ function registerColor(name, r, g, b) {
       deltaColorTotal = colorTotal / colorTotal2,
       deltaR = rRatio / rRatio2,
       deltaG = gRatio / gRatio2;
-    
+
     return deltaColorTotal > limit1 && deltaColorTotal < limit2 &&
       deltaR > limit1 && deltaR < limit2 &&
       deltaG > limit1 && deltaG < limit2;
@@ -83,7 +82,7 @@ function calculateCorners(data) {
   if(data.length < 4) {
     return undefined;
   }
-  
+
   var topLeft = data
   .sort((a,b) => a.x > b.x)
   .slice(0,2)
@@ -107,11 +106,11 @@ var bottomRight = data
   .slice(0,2)
   .sort((a,b) => a.y < b.y)
   .slice(0,1)[0];
-  
+
   return [ topLeft, topRight , bottomRight, bottomLeft ];
 }
 
-function calculateTrackables(eventData, corners) { 
+function calculateTrackables(eventData, corners) {
     return eventData.filter(i => {
         return !corners.some(c => i.x === c.x && i.y === c.y)
     });
