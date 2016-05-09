@@ -1,13 +1,13 @@
 import Rx from '@reactivex/rxjs/dist/cjs/Rx';
 import * as tracking from 'tracking';
 
-const limit1 = 0.7;
-const limit2 = 1.5;
-const minDimension = 12;
+const limit1 = 0.6;
+const limit2 = 1.6;
+const minDimension = 9;
 const minGroupSize = 100;
 
 const colors = [
-  createColor('refColor', 'FD6289')
+  createColor('refColor', 'c38b89')
 ];
 
 export const tracker = Rx.Observable.create(observer => {
