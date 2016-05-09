@@ -7,8 +7,8 @@ import {
 } from './tracker';
 
 // debugonly
-let debug = true;
-document.querySelector('#background').style.backgroundColor = (debug) ? "transparent" :"white";
+let debug = localStorage.getItem('debug') || false;
+document.querySelector('#background').style.backgroundColor = (debug) ? "transparent" :"black";
 
 
 

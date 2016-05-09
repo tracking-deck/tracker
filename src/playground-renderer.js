@@ -4,18 +4,20 @@ const screenRatio = 4 / 3;
 
 const colors = {
     outline: "pink",
-    marker: "#FD6289"
+    marker: "black",
+    playgroundOutline: "blue",
+    trackable: "white"
 };
 const canvasWidth = 1000;
 const outlineWidth = 10;
-const markerSize = 50;
+const markerSize = 60;
 
 class PlaygroundRenderer extends HTMLCanvasElement {
     createdCallback() {
         this.width = canvasWidth;
         this.height = canvasWidth / screenRatio;
         this.context = this.getContext('2d');
-        this.renderPlayground();
+        this.drawOutline();
     }
 
     subscribeTo(observable) {
@@ -31,7 +33,6 @@ class PlaygroundRenderer extends HTMLCanvasElement {
 
     renderPlayground(state) {
         this.context.clearRect(0, 0, this.width, this.height);
-        this.drawOutline();
 
         this.context.beginPath();
         this.context.moveTo(state.topLeft.x, state.topLeft.y);
@@ -39,14 +40,13 @@ class PlaygroundRenderer extends HTMLCanvasElement {
         this.context.lineTo(state.bottomRight.x, state.bottomRight.y);
         this.context.lineTo(state.bottomLeft.x, state.bottomLeft.y);
         this.context.lineTo(state.topLeft.x, state.topLeft.y);
-        this.context.strokeStyle = "red";
+        this.context.strokeStyle = colors.playgroundOutline;
         this.context.stroke();
 
+        this.drawOutline();
     }
 
     drawOutline() {
-
-
         this.context.beginPath();
         this.context.moveTo(0, 0);
         this.context.lineTo(this.width, 0);
@@ -62,12 +62,12 @@ class PlaygroundRenderer extends HTMLCanvasElement {
         this.drawMarkerRect(this.width - outlineWidth / 2 - markerSize, this.height - outlineWidth / 2 - markerSize);
         this.drawMarkerRect(outlineWidth / 2, this.height - outlineWidth / 2 - markerSize);
 
-        this.drawMarkerText("Zühlke");
+        //this.drawMarkerText("Zühlke");
     }
 
     drawMarkerText(text) {
         this.context.font = "60px Arial";
-        this.context.textAlign="center"; 
+        this.context.textAlign="center";
         this.context.fillText(text, this.width/2, this.height/2);
     }
 
@@ -80,7 +80,8 @@ class PlaygroundRenderer extends HTMLCanvasElement {
     renderTrackable(trackable) {
         this.context.beginPath();
         this.context.arc(trackable.x, trackable.y, 20, 0, 2 * Math.PI);
-        this.context.strokeStyle = "blue";
+        this.context.strokeStyle = colors.trackable;
+        this.context.lineWidth = 3;
         this.context.stroke();
     }
 }
