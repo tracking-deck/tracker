@@ -7,15 +7,20 @@ const deltaMax = 3500;
 const minDimension = 17;
 const minGroupSize = 100;
 
+var transformer = null;
+
 //Previous colors: C90000
 const colors = [
     createColor('refColor', '9f172d')
 
 ];
 
+// var keyDowns = Rx.Observable.fromEvent(document, 'keydown');
+
+
 export const tracker = Rx.Observable.create(observer => {
     var colorTracker = new tracking.ColorTracker();
-    console.debug("Observable created");
+    //console.debug("Observable created");
 
     tracking.track('#video', colorTracker, {
         camera: true
@@ -65,21 +70,22 @@ export const tracker = Rx.Observable.create(observer => {
                     bottomRight: corners[2]
                 };
 
-                var t = new Transformer(
-                    [state.topLeft.x, state.topLeft.y,
-                     state.topRight.x, state.topRight.y,
-                     state.bottomRight.x, state.bottomRight.y,
-                     state.bottomLeft.x, state.bottomLeft.y
-                    ],
-                    [0, 0,    1000,0,    1000,750,   0,750]
-                );
+                if (!transformer) {
+                    transformer = new Transformer(
+                        [state.topLeft.x, state.topLeft.y,
+                            state.topRight.x, state.topRight.y,
+                            state.bottomRight.x, state.bottomRight.y,
+                            state.bottomLeft.x, state.bottomLeft.y
+                        ], [0, 0, 1000, 0, 1000, 750, 0, 750]
+                    );
+                }
 
                 var newState = {};
-                newState.topLeft = t.transform(state.topLeft);
-                newState.topRight = t.transform(state.topRight);
-                newState.bottomLeft = t.transform(state.bottomLeft);
-                newState.bottomRight = t.transform(state.bottomRight);
-                newState.trackables = calculateTrackables(data, corners).map(trackable => t.transform(trackable));
+                newState.topLeft = transformer.transform(state.topLeft);
+                newState.topRight = transformer.transform(state.topRight);
+                newState.bottomLeft = transformer.transform(state.bottomLeft);
+                newState.bottomRight = transformer.transform(state.bottomRight);
+                newState.trackables = calculateTrackables(data, corners).map(trackable => transformer.transform(trackable));
                 observer.next(newState);
             }
         }
