@@ -2,9 +2,8 @@ console.clear();
 
 import PlaygroundRenderer from './playground-renderer';
 import './styles.less'
-import {
-    tracker
-} from './tracker';
+import { tracker } from './tracker';
+import * as t from './transformer';
 
 // debugonly
 let debug = localStorage.getItem('debug') || false;
