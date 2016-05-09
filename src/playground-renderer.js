@@ -21,26 +21,16 @@ class PlaygroundRenderer extends HTMLCanvasElement {
 
     subscribeTo(observable) {
         observable.subscribe({
-            next: state => {
-                this.renderPlayground(state);
-                if (state.trackables.length > 0) {
-                    state.trackables.forEach(i => this.renderTrackable(i));
-                }
-            }
+            next: state => this.renderPlayground(state)
         });
     }
 
     renderPlayground(state) {
         this.context.clearRect(0, 0, this.width, this.height);
 
-        this.context.beginPath();
-        this.context.moveTo(state.topLeft.x, state.topLeft.y);
-        this.context.lineTo(state.topRight.x, state.topRight.y);
-        this.context.lineTo(state.bottomRight.x, state.bottomRight.y);
-        this.context.lineTo(state.bottomLeft.x, state.bottomLeft.y);
-        this.context.lineTo(state.topLeft.x, state.topLeft.y);
-        this.context.strokeStyle = colors.playgroundOutline;
-        this.context.stroke();
+        if (state.trackables.length > 0) {
+            state.trackables.forEach(i => this.renderTrackable(i));
+        }
 
         this.drawOutline();
     }
@@ -55,13 +45,6 @@ class PlaygroundRenderer extends HTMLCanvasElement {
         this.context.lineWidth = outlineWidth;
         this.context.strokeStyle = colors.outline;
         this.context.stroke();
-/*
-        this.drawMarkerRect(outlineWidth / 2, outlineWidth / 2);
-        this.drawMarkerRect(this.width - outlineWidth / 2 - markerSize, outlineWidth / 2);
-        this.drawMarkerRect(this.width - outlineWidth / 2 - markerSize, this.height - outlineWidth / 2 - markerSize);
-        this.drawMarkerRect(outlineWidth / 2, this.height - outlineWidth / 2 - markerSize);
-*/
-        //this.drawMarkerText("Zühlke");
     }
 
     drawMarkerText(text) {
