@@ -1,26 +1,19 @@
 import Rx from '@reactivex/rxjs/dist/cjs/Rx';
 import * as tracking from 'tracking';
 import Transformer from './transformer';
-
-const calibrationMode = false;
-const deltaMax = 3500;
-const minDimension = 17;
-const minGroupSize = 100;
+import config from './config';
 
 var transformer = null;
 
 //Previous colors: C90000
 const colors = [
-    createColor('refColor', '9f172d')
-
+    createColor('refColor', config.refColor)
 ];
 
 // var keyDowns = Rx.Observable.fromEvent(document, 'keydown');
 
-
 export const tracker = Rx.Observable.create(observer => {
     var colorTracker = new tracking.ColorTracker();
-    //console.debug("Observable created");
 
     tracking.track('#video', colorTracker, {
         camera: true
@@ -31,15 +24,15 @@ export const tracker = Rx.Observable.create(observer => {
     });
 
     colorTracker.setColors(colors.map(c => c.name));
-    colorTracker.setMinDimension(minDimension);
-    colorTracker.setMinGroupSize(minGroupSize);
+    colorTracker.setMinDimension(config.minDimension);
+    colorTracker.setMinGroupSize(config.minGroupSize);
 
     colorTracker.on('track', function(event) {
         const data = event.data.map(c => ({
             x: c.x + c.width / 2,
             y: c.y + c.height / 2
         }));
-        if (calibrationMode) {
+        if (config.calibrationMode) {
             observer.next({
                 topLeft: {
                     x: 0,
@@ -76,7 +69,7 @@ export const tracker = Rx.Observable.create(observer => {
                             state.topRight.x, state.topRight.y,
                             state.bottomRight.x, state.bottomRight.y,
                             state.bottomLeft.x, state.bottomLeft.y
-                        ], [0, 0, 1000, 0, 1000, 750, 0, 750]
+                        ], [0, 0, config.canvasWidth, 0, config.canvasWidth, config.canvasWidth / config.screenRatio, 0, config.canvasWidth / config.screenRatio]
                     );
                 }
 
@@ -93,14 +86,11 @@ export const tracker = Rx.Observable.create(observer => {
 });
 
 function createColor(name, hex) {
-    let r = parseInt(hex.substring(0, 2), 16);
-    let g = parseInt(hex.substring(2, 4), 16);
-    let b = parseInt(hex.substring(4, 6), 16);
     return {
         "name": name,
-        "r": r,
-        "g": g,
-        "b": b
+        "r": parseInt(hex.substring(0, 2), 16),
+        "g": parseInt(hex.substring(2, 4), 16),
+        "b": parseInt(hex.substring(4, 6), 16)
     };
 }
 
@@ -115,7 +105,7 @@ function registerColor(name, r1, g1, b1) {
         var dx = Math.abs(r2 - r1);
         var dy = Math.abs(g2 - g1);
         var dz = Math.abs(b2 - b1);
-        return dx * dx + dy * dy + dz * dz < deltaMax;
+        return dx * dx + dy * dy + dz * dz < config.deltaMax;
     });
 }
 

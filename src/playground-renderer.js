@@ -1,6 +1,5 @@
 import Rx from '@reactivex/rxjs/dist/cjs/Rx';
-
-const screenRatio = 4 / 3;
+import config from './config';
 
 const colors = {
     outline: "pink",
@@ -8,14 +7,14 @@ const colors = {
     playgroundOutline: "blue",
     trackable: "white"
 };
-const canvasWidth = 1000;
+
 const outlineWidth = 10;
 const markerSize = 60;
 
 class PlaygroundRenderer extends HTMLCanvasElement {
     createdCallback() {
-        this.width = canvasWidth;
-        this.height = canvasWidth / screenRatio;
+        this.width = config.canvasWidth;
+        this.height = config.canvasWidth / config.screenRatio;
         this.context = this.getContext('2d');
         this.drawOutline();
     }
