@@ -16,7 +16,6 @@ class PlaygroundRenderer extends HTMLCanvasElement {
         this.width = config.canvasWidth;
         this.height = config.canvasWidth / config.screenRatio;
         this.context = this.getContext('2d');
-        this.drawOutline();
     }
 
     subscribeTo(observable) {
@@ -27,12 +26,8 @@ class PlaygroundRenderer extends HTMLCanvasElement {
 
     renderPlayground(state) {
         this.context.clearRect(0, 0, this.width, this.height);
-
-        if (state.trackables.length > 0) {
-            state.trackables.forEach(i => this.renderTrackable(i));
-        }
-
         this.drawOutline();
+        state.trackables.forEach(i => this.renderTrackable(i));
     }
 
     drawOutline() {
@@ -45,18 +40,6 @@ class PlaygroundRenderer extends HTMLCanvasElement {
         this.context.lineWidth = outlineWidth;
         this.context.strokeStyle = colors.outline;
         this.context.stroke();
-    }
-
-    drawMarkerText(text) {
-        this.context.font = "60px Arial";
-        this.context.textAlign="center";
-        this.context.fillText(text, this.width/2, this.height/2);
-    }
-
-
-    drawMarkerRect(x, y) {
-        this.context.fillStyle = colors.marker;
-        this.context.fillRect(x, y, markerSize, markerSize);
     }
 
     renderTrackable(trackable) {

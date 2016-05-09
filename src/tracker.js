@@ -7,6 +7,10 @@ const colors = [
     createColor('refColor', config.refColor)
 ];
 
+const defaultState = {
+    trackables: []
+};
+
 //Rx.Observable.fromEvent(document, 'keydown').subscribe;
 
 export const tracker = Rx.Observable.create(observer => {
@@ -47,7 +51,7 @@ export const tracker = Rx.Observable.create(observer => {
             }
         }
     });
-});
+}).startWith(defaultState);
 
 function createColor(name, hex) {
     return {
