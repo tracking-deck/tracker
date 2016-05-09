@@ -1,43 +1,39 @@
 html,
 body {
-  height: 100%;
-  margin: 0;
+    height: 100%;
+    margin: 0;
 }
-
 body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: black;
 }
-
 .container {
-  position: relative;
-  height: 100%;
-  width: 100%;
+    position: relative;
+    height: 100%;
+    width: 100%;
 }
-.container, .container canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
+.container,
+.container canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+}
+#video,
+#background {
+    position: absolute;
+    top: 30px;
+    left: 30px;
+    height: 600px;
+    width: 800px;
 }
 #video {
-  position: absolute;
-  top: 30px;
-  left: 30px;
-    height: 600px;
-    width: 800px;
     z-index: -2;
 }
-
-#background  {
-  position: absolute;
-  top: 30px;
-  left: 30px;
-    height: 600px;
-    width: 800px;
+#background {
     z-index: -1;
     background-color: black;
 }
