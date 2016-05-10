@@ -1,7 +1,7 @@
 export default {
+    busAddress: 'http://10.0.0.196:3000',
     screenRatio: 4/3,
     canvasWidth: 1000,
-    calibrationMode: false,
     deltaMax: 3500,
     minDimension: 17,
     minGroupSize: 100,
