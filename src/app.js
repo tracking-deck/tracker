@@ -6,7 +6,7 @@ import { tracker } from './tracker';
 import * as t from './transformer';
 
 if (localStorage.getItem('debug') !== null) {
-	let debug = (localStorage.getItem('debug') || false) === 'true';
+	let debug = localStorage.getItem('debug') === 'true';
 	document.querySelector('#background').className = (debug) ? "show-webcam" :"hide-webcam";
 }
 
