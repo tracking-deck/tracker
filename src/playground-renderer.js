@@ -44,7 +44,7 @@ class PlaygroundRenderer extends HTMLCanvasElement {
 
     renderTrackable(trackable) {
         this.context.beginPath();
-        this.context.arc(trackable.x, trackable.y, 20, 0, 2 * Math.PI);
+        this.context.arc(trackable.x, trackable.y, 10, 0, 2 * Math.PI);
         this.context.strokeStyle = colors.trackable;
         this.context.lineWidth = 3;
         this.context.stroke();
