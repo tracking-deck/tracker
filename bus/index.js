@@ -5,7 +5,7 @@ var io = require('socket.io')(http);
 io.on('connection', socket => {
     console.log("connected.");
 
-    socket.on('chat message', msg => socket.broadcast.emit('chat message', msg));
+    socket.on('chat', msg => socket.broadcast.emit('chat', msg));
 
     socket.on('trackables', msg => {
         console.log('message: trackables', msg);

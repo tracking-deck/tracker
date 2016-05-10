@@ -8,16 +8,7 @@ import config from './config';
 
 
 let socket = io.connect(config.busAddress);
-
-socket.emit("trackables", "hoi");
-
-
-/*
-socket.on('chat message', function(msg){
-   console.log("message received: ", msg);
-});
-*/
-
+//tracker.subscribe(trackables => socket.emit('trackables', trackables));
 
 if (localStorage.getItem('debug') !== null) {
 	let debug = localStorage.getItem('debug') === 'true';
