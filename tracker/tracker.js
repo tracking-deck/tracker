@@ -50,9 +50,7 @@ function rawDataObservable(observer) {
             y: c.y + c.height / 2
         }));
 
-        if (data.length > 3) {
-            observer.next(data);
-        }
+        observer.next(data);
     });
 }
 
