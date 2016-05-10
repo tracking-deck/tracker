@@ -7,14 +7,30 @@ const colors = [
     createColor('refColor', config.refColor)
 ];
 
-const defaultState = {
-    trackables: []
-};
+const rawData = Rx.Observable
+    .create(rawDataObservable)
+    .startWith([]);
+const tracker = rawData
+    .map(transformTrackables);
+const keypress = Rx.Observable
+    .fromEvent(document, 'keydown')
+    .filter(e => e.code === 'Space');
+const delayedStartup = Rx.Observable
+    .interval(1000)
+    .take(1);
+const calibration = Rx.Observable
+    .merge(keypress, delayedStartup)
+    .withLatestFrom(rawData)
+    .subscribe(result => calibrate(result[1]));
 
-//Rx.Observable.fromEvent(document, 'keydown').subscribe;
+function transformTrackables(rawData) {
+    return {
+        trackables: rawData.map(trackable => transformer.transform(trackable))
+    };
+}
 
-export const tracker = Rx.Observable.create(observer => {
-    var colorTracker = new tracking.ColorTracker();
+function rawDataObservable(observer) {
+    const colorTracker = new tracking.ColorTracker();
 
     tracking.track('#video', colorTracker, {
         camera: true
@@ -33,25 +49,23 @@ export const tracker = Rx.Observable.create(observer => {
             x: c.x + c.width / 2,
             y: c.y + c.height / 2
         }));
-        if (config.calibrationMode) {
-            observer.next({ trackables: data });
-        } else {
-            const corners = calculateCorners(data);
 
-            if (corners) {
-                transformer.updatePerspective([
-                    corners.topLeft.x, corners.topLeft.y,
-                    corners.topRight.x, corners.topRight.y,
-                    corners.bottomRight.x, corners.bottomRight.y,
-                    corners.bottomLeft.x, corners.bottomLeft.y]);
-
-                observer.next({
-                    trackables: data.map(trackable => transformer.transform(trackable))
-                });
-            }
+        if (data.length > 3) {
+            observer.next(data);
         }
     });
-}).startWith(defaultState);
+}
+
+function calibrate(rawData) {
+    const corners = calculateCorners(rawData);
+
+    transformer.updatePerspective([
+        corners.topLeft.x, corners.topLeft.y,
+        corners.topRight.x, corners.topRight.y,
+        corners.bottomRight.x, corners.bottomRight.y,
+        corners.bottomLeft.x, corners.bottomLeft.y
+    ]);
+}
 
 function createColor(name, hex) {
     return {
@@ -82,6 +96,8 @@ function calculateCorners(data) {
         return undefined;
     }
 
+    data.forEach(rd => console.log(rd));
+
     var topLeft = data
         .sort((a, b) => a.x > b.x)
         .slice(0, 2)
@@ -95,18 +111,27 @@ function calculateCorners(data) {
         .slice(0, 1)[0];
 
     var bottomLeft = data
-        .sort((a, b) => a.x > b.x)
-        .slice(0, 2)
         .sort((a, b) => a.y < b.y)
+        .slice(0, 2)
+        .sort((a, b) => a.x > b.x)
         .slice(0, 1)[0];
 
     var bottomRight = data
-        .sort((a, b) => a.x < b.x)
-        .slice(0, 2)
         .sort((a, b) => a.y < b.y)
+        .slice(0, 2)
+        .sort((a, b) => a.x < b.x)
         .slice(0, 1)[0];
 
-    return { topLeft, topRight, bottomRight, bottomLeft };
+    return {
+        topLeft,
+        topRight,
+        bottomRight,
+        bottomLeft
+    };
+}
+
+export {
+    tracker
 }
 
 /*
