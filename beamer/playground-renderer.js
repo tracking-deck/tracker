@@ -1,5 +1,5 @@
 import Rx from '@reactivex/rxjs/dist/cjs/Rx';
-import config from './config';
+import config from '../config';
 
 const colors = {
     outline: "pink",
@@ -20,14 +20,15 @@ class PlaygroundRenderer extends HTMLCanvasElement {
 
     subscribeTo(observable) {
         observable.subscribe({
-            next: state => this.renderPlayground(state)
+            next: trackables => this.renderPlayground(trackables)
         });
     }
 
-    renderPlayground(state) {
+    renderPlayground(trackables) {
+        console.log("render", trackables);
         this.context.clearRect(0, 0, this.width, this.height);
         this.drawOutline();
-        state.trackables.forEach(i => this.renderTrackable(i));
+        trackables.forEach(i => this.renderTrackable(i));
     }
 
     drawOutline() {

@@ -1,7 +1,7 @@
 import Rx from '@reactivex/rxjs/dist/cjs/Rx';
 import * as tracking from 'tracking';
 import transformer from './transformer';
-import config from './config';
+import config from '../config';
 
 const colors = [
     createColor('refColor', config.refColor)
@@ -24,9 +24,7 @@ const calibration = Rx.Observable
     .subscribe(result => calibrate(result[1]));
 
 function transformTrackables(rawData) {
-    return {
-        trackables: rawData.map(trackable => transformer.transform(trackable))
-    };
+    return rawData.map(trackable => transformer.transform(trackable));
 }
 
 function rawDataObservable(observer) {

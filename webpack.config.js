@@ -1,16 +1,22 @@
 var path = require('path');
 var webpack = require('webpack');
+var HtmlWebpackPlugin = require('html-webpack-plugin');
 
 var paths = {
-    app : path.resolve(__dirname, './tracker'),
+    dist: path.resolve(__dirname, './dist'),
+    tracker : path.resolve(__dirname, './tracker'),
+    beamer : path.resolve(__dirname, './beamer'),
     nodemodules: path.resolve(__dirname, 'node_modules')
 };
 
 module.exports = {
-    entry: path.resolve(paths.app, "app.js"),
+    entry: {
+        tracker: path.resolve(paths.tracker, "app.js"),
+        beamer: path.resolve(paths.beamer, "app.js")
+    },
     output: {
-        path: __dirname,
-        filename: "bundle.js"
+        path: paths.dist,
+        filename: "[name].bundle.js"
     },
     resolve: {
         extensions: ['', '.js'],
@@ -19,7 +25,7 @@ module.exports = {
         }
     },
     devServer: {
-        contentBase: paths.app,
+        contentBase: paths.dist,
     },
     module: {
         loaders: [
@@ -32,6 +38,16 @@ module.exports = {
             new webpack.ProvidePlugin({
                 tracking: "tracking",
                 'window.tracking': "tracking"
+            }),
+            new HtmlWebpackPlugin({
+              filename: 'beamer.html',
+              template: 'beamer/index.html',
+              inject: false
+            }),
+            new HtmlWebpackPlugin({
+              filename: 'tracker.html',
+              template: 'tracker/index.html',
+              inject: false
             })
         ],
 };

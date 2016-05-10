@@ -1,5 +1,5 @@
 import PerspT from 'perspective-transform';
-import config from './config';
+import config from '../config';
 
 class Transformer {
     constructor() {
