@@ -59,12 +59,14 @@ function rawDataObservable(observer) {
 function calibrate(rawData) {
     const corners = calculateCorners(rawData);
 
-    transformer.updatePerspective([
-        corners.topLeft.x, corners.topLeft.y,
-        corners.topRight.x, corners.topRight.y,
-        corners.bottomRight.x, corners.bottomRight.y,
-        corners.bottomLeft.x, corners.bottomLeft.y
-    ]);
+    if (corners) {
+        transformer.updatePerspective([
+            corners.topLeft.x, corners.topLeft.y,
+            corners.topRight.x, corners.topRight.y,
+            corners.bottomRight.x, corners.bottomRight.y,
+            corners.bottomLeft.x, corners.bottomLeft.y
+        ]);
+    }
 }
 
 function createColor(name, hex) {
