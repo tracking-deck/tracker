@@ -96,30 +96,28 @@ function calculateCorners(data) {
         return undefined;
     }
 
-    data.forEach(rd => console.log(rd));
-
     var topLeft = data
-        .sort((a, b) => a.x > b.x)
+        .sort((a, b) => a.x - b.x)
         .slice(0, 2)
-        .sort((a, b) => a.y > b.y)
+        .sort((a, b) => a.y - b.y)
         .slice(0, 1)[0];
 
     var topRight = data
-        .sort((a, b) => a.x < b.x)
+        .sort((a, b) => b.x - a.x)
         .slice(0, 2)
-        .sort((a, b) => a.y > b.y)
+        .sort((a, b) => a.y - b.y)
         .slice(0, 1)[0];
 
     var bottomLeft = data
-        .sort((a, b) => a.y < b.y)
+        .sort((a, b) => b.y - a.y)
         .slice(0, 2)
-        .sort((a, b) => a.x > b.x)
+        .sort((a, b) => a.x - b.x)
         .slice(0, 1)[0];
 
     var bottomRight = data
-        .sort((a, b) => a.y < b.y)
+        .sort((a, b) => b.y - a.y)
         .slice(0, 2)
-        .sort((a, b) => a.x < b.x)
+        .sort((a, b) => b.x - a.x)
         .slice(0, 1)[0];
 
     return {
