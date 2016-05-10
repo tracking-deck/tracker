@@ -5,11 +5,10 @@ import './styles.less'
 import { tracker } from './tracker';
 import * as t from './transformer';
 
-// debugonly
-let debug = localStorage.getItem('debug') || false;
-document.querySelector('#background').style.backgroundColor = (debug) ? "transparent" :"black";
-
-
+if (localStorage.getItem('debug') !== null) {
+	let debug = (localStorage.getItem('debug') || false) === 'true';
+	document.querySelector('#background').className = (debug) ? "show-webcam" :"hide-webcam";
+}
 
 let playgroundRender = new PlaygroundRenderer();
 document.querySelector('.container')
