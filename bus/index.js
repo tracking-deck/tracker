@@ -9,8 +9,11 @@ io.on('connection', socket => {
 
     socket.on('chat', msg => socket.broadcast.emit('chat', msg));
 
+    socket.on('command', msg => socket.broadcast.emit('command', msg));
+
     socket.on('trackables', msg => {
-        console.log('message: trackables', msg);
+        console.log('# of points: ', msg.length);
+        console.log(msg);
         socket.broadcast.emit('trackables', msg);
     })
 });
