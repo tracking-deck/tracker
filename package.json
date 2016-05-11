@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "startTracker": "webpack-dev-server --host 0.0.0.0 --progress --open --config webpack.config.js",
-    "startBus": "nodemon ./bus/index.js",
-    "start": "parallelshell \"npm run startBus\" \"npm run startTracker\""
+    "apps": "webpack-dev-server --host 0.0.0.0 --progress --open --config webpack.config.js",
+    "bus": "nodemon ./bus/index.js",
+    "start": "parallelshell \"npm run bus\" \"npm run apps\""
   },
   "author": "",
   "license": "ISC",
