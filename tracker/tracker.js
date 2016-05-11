@@ -4,8 +4,7 @@ import transformer from './transformer';
 import config from '../config';
 
 const colors = [
-    createColor('refColor1', config.refColor1),
-    createColor('refColor2', config.refColor2)
+    createColor('custom', config.refColorCustom)
 ];
 
 const rawData = Rx.Observable
@@ -35,35 +34,24 @@ function rawDataObservable(observer) {
         camera: true
     });
 
-    colors.forEach(c => {
-        registerColor(c.name, c.r, c.g, c.b);
-    });
+    registerColorCustomFunction('custom', colors[0].r, colors[0].g, colors[0].b);
+    colorTracker.setColors(['custom', 'yellow']);
 
-    colorTracker.setColors(colors.map(c => c.name));
     colorTracker.setMinDimension(config.minDimension);
     colorTracker.setMinGroupSize(config.minGroupSize);
 
     colorTracker.on('track', function(event) {
         const data = event.data.map(c => ({
-            color: c.color,
             x: c.x + c.width / 2,
             y: c.y + c.height / 2,
             rectangle: {
-                    x: c.x,
-                    y: c.y,
-                    width: c.width,
-                    height: c.height,
+                x: c.x,
+                y: c.y,
+                color: c.color,
+                width: c.width,
+                height: c.height,
             }
         }));
-
-/*
-        data.forEach(function(r) {
-            console.log(r);
-        });
-
-        event.data.forEach(function(rect) {
-            console.log(rect.x, rect.y, rect.height, rect.width, rect.color);
-        });*/
 
         observer.next(data);
     });
@@ -78,19 +66,39 @@ function createColor(name, hex) {
     };
 }
 
-function registerColor(name, r1, g1, b1) {
+function registerColorCustomFunction(name, r1, g1, b1) {
     console.log("register color", r1, g1, b1);
 
-    tracking.ColorTracker.registerColor(name, function(r2, g2, b2) {
-        if ((b2 - g2) >= (b1 - g1) && (r2 - g2) >= (r1 - g1)) {
-            return true;
-        }
+    var colorTotal = r1 + g1 + b1;
+    if (colorTotal === 0) {
+        tracking.ColorTracker.registerColor('custom', function(r, g, b) {
+            return r + g + b < 10;
+        });
+    } else {
+        var rRatio = r1 / colorTotal;
+        var gRatio = g1 / colorTotal;
 
-        var dx = Math.abs(r2 - r1);
-        var dy = Math.abs(g2 - g1);
-        var dz = Math.abs(b2 - b1);
-        return dx * dx + dy * dy + dz * dz < config.deltaMax;
-    });
+        tracking.ColorTracker.registerColor(name, function(r, g, b) {
+            var colorTotal2 = r + g + b;
+
+            if (colorTotal2 === 0) {
+                if (colorTotal < 10) {
+                    return true;
+                }
+                return false;
+            }
+
+            var rRatio2 = r / colorTotal2,
+                gRatio2 = g / colorTotal2,
+                deltaColorTotal = colorTotal / colorTotal2,
+                deltaR = rRatio / rRatio2,
+                deltaG = gRatio / gRatio2;
+
+            return deltaColorTotal > 0.9 && deltaColorTotal < 1.1 &&
+                deltaR > 0.9 && deltaR < 1.1 &&
+                deltaG > 0.9 && deltaG < 1.1;
+        });
+    }
 }
 
 function calibrate(rawData) {
