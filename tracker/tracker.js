@@ -23,12 +23,11 @@ const delayedStartup = Rx.Observable
     .take(1);
 const configUpdates = Rx.Observable
 	.fromEvent(socket, 'configUpdate')
-    .map(change => {
+    .do(change => {
         if (change.type === 'color') {
             let newColor = createColor(change.name, change.color);
             registerColorCustomFunction(newColor.name, newColor.r, newColor.g, newColor.b);
         }
-        return change;
     });
 const calibration = Rx.Observable
     .merge(keypress, delayedStartup, configUpdates)
