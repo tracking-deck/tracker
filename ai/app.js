@@ -29,7 +29,7 @@ Rx.Observable
 
 const trackables = Rx.Observable
     .fromEvent(socket, 'trackables')
-    .throttleTime(500)
+    .throttleTime(1500)
     .subscribe(msg => {
         let dest = {
             x: 500,
@@ -76,19 +76,31 @@ const trackables = Rx.Observable
 
             let angle = rad2deg(angleBetween(front, midpoint, dest));
             console.log(`angle: ${angle}`);
+            let destLeft = isLeft(front, midpoint, dest);
+            console.log(`isLeft: ${isLeft}`);
 
-            if (Math.abs(angle) < 20) {
-                // rover straight
-                socket.emit('command', { target: 'lego-ev3', command: 'straight' });
-                setTimeout(function () {
-                    socket.emit('command', { target: 'lego-ev3', command: 'stop' });
-                }, 1000);
-            } else {
-                // rover turn
-                socket.emit('command', { target: 'lego-ev3', command: 'left' });
-                setTimeout(function () {
-                    socket.emit('command', { target: 'lego-ev3', command: 'stop' });
-                }, 500);
+            console.log('distance:' + distance(front, dest));
+            if (distance(front, dest) > 100) {
+                if (Math.abs(angle) < 20) {
+                    // rover straight
+                    socket.emit('command', { target: 'lego-ev3', command: 'straight' });
+                    setTimeout(function () {
+                        socket.emit('command', { target: 'lego-ev3', command: 'stop' });
+                    }, 1500);
+                } else {
+                    // rover turn
+                    let time = Math.max(50, Math.floor(Math.abs(angle) / 10) * 100);
+                    console.log(`turn ${time}ms`);
+
+                    if (destLeft) {
+                        socket.emit('command', { target: 'lego-ev3', command: 'left' });
+                    } else {
+                        socket.emit('command', { target: 'lego-ev3', command: 'right' });
+                    }
+                    setTimeout(function () {
+                        socket.emit('command', { target: 'lego-ev3', command: 'stop' });
+                    }, time);
+                }
             }
 
         }
@@ -106,7 +118,9 @@ function rad2deg(radians) {
 function distance(p1, p2) {
     return Math.sqrt((p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y));
 }
-
+function isLeft(lineA, lineB, point) {
+    return ((lineB.x - lineA.x) * (point.y - lineA.y) - (lineB.y - lineA.y) * (point.x - lineA.x)) > 0;
+}
 
 function calculateCorners(data) {
     if (data.length < 4) {
