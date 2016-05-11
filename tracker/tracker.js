@@ -53,6 +53,27 @@ function rawDataObservable(observer) {
             }
         }));
 
+        if (false) {
+            var canvas = document.getElementById('canvas');
+            var context = canvas.getContext('2d');
+            context.clearRect(0, 0, canvas.width, canvas.height);
+
+            //context.fillRect(20,20,150,100);
+
+            data.forEach(function(point) {
+                var rect = point.rectangle;
+
+                context.strokeStyle = 'white';
+                context.strokeRect(rect.x, rect.y, rect.width, rect.height);
+                context.font = '11px Helvetica';
+                context.fillStyle = "#fff";
+                context.fillText('x: ' + rect.x + 'px', rect.x + rect.width + 5, rect.y + 11);
+                context.fillText('y: ' + rect.y + 'px', rect.x + rect.width + 5, rect.y + 22);
+            });
+
+        }
+
+
         observer.next(data);
     });
 }
