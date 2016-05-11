@@ -6,13 +6,15 @@ var paths = {
     dist: path.resolve(__dirname, './dist'),
     tracker : path.resolve(__dirname, './tracker'),
     beamer : path.resolve(__dirname, './beamer'),
+    admin : path.resolve(__dirname, './admin'),
     nodemodules: path.resolve(__dirname, 'node_modules')
 };
 
 module.exports = {
     entry: {
         tracker: path.resolve(paths.tracker, "app.js"),
-        beamer: path.resolve(paths.beamer, "app.js")
+        beamer: path.resolve(paths.beamer, "app.js"),
+        admin: path.resolve(paths.admin, "app.js")
     },
     output: {
         path: paths.dist,
@@ -47,6 +49,11 @@ module.exports = {
             new HtmlWebpackPlugin({
               filename: 'tracker.html',
               template: 'tracker/index.html',
+              inject: false
+            }),
+            new HtmlWebpackPlugin({
+              filename: 'admin.html',
+              template: 'admin/index.html',
               inject: false
             })
         ],
