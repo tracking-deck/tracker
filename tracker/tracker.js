@@ -2,6 +2,9 @@ import Rx from '@reactivex/rxjs/dist/cjs/Rx';
 import * as tracking from 'tracking';
 import transformer from './transformer';
 import config from '../config';
+import io from 'socket.io-client';
+
+let socket = io.connect(config.busAddress);
 
 const colors = [
     createColor('custom', config.refColorCustom)
@@ -18,10 +21,21 @@ const keypress = Rx.Observable
 const delayedStartup = Rx.Observable
     .interval(1000)
     .take(1);
+const configUpdates = Rx.Observable
+	.fromEvent(socket, 'configUpdate')
+    .do(change => {
+        console.log('configUpdate received: ', change);
+        if (change.type === 'color') {
+            let newColor = createColor(change.name, change.color);
+            registerColorCustomFunction(newColor.name, newColor.r, newColor.g, newColor.b);
+        } 
+    });
 const calibration = Rx.Observable
-    .merge(keypress, delayedStartup)
+    .merge(keypress, delayedStartup, configUpdates)
     .withLatestFrom(rawData)
     .subscribe(result => calibrate(result[1]));
+
+tracker.throttleTime(1000).subscribe(trackables => socket.emit('trackables', trackables));
 
 function transformTrackables(rawData) {
     return rawData.map(trackable => transformer.transform(trackable));
@@ -52,6 +66,27 @@ function rawDataObservable(observer) {
                 height: c.height,
             }
         }));
+
+        if (false) {
+            var canvas = document.getElementById('canvas');
+            var context = canvas.getContext('2d');
+            context.clearRect(0, 0, canvas.width, canvas.height);
+
+            //context.fillRect(20,20,150,100);
+
+            data.forEach(function(point) {
+                var rect = point.rectangle;
+
+                context.strokeStyle = 'white';
+                context.strokeRect(rect.x, rect.y, rect.width, rect.height);
+                context.font = '11px Helvetica';
+                context.fillStyle = "#fff";
+                context.fillText('x: ' + rect.x + 'px', rect.x + rect.width + 5, rect.y + 11);
+                context.fillText('y: ' + rect.y + 'px', rect.x + rect.width + 5, rect.y + 22);
+            });
+
+        }
+
 
         observer.next(data);
     });
@@ -152,7 +187,10 @@ function calculateCorners(data) {
 }
 
 export {
-    tracker
+    tracker,
+    rawData,
+    registerColorCustomFunction,
+    createColor
 }
 
 /*
