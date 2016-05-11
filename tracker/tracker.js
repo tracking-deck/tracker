@@ -22,13 +22,13 @@ const delayedStartup = Rx.Observable
     .interval(1000)
     .take(1);
 const configUpdates = Rx.Observable
-	.fromEvent(socket, 'configUpdate')
+    .fromEvent(socket, 'configUpdate')
     .do(change => {
         console.log('configUpdate received: ', change);
         if (change.type === 'color') {
             let newColor = createColor(change.name, change.color);
             registerColorCustomFunction(newColor.name, newColor.r, newColor.g, newColor.b);
-        } 
+        }
     });
 const calibration = Rx.Observable
     .merge(keypress, delayedStartup, configUpdates)
@@ -36,6 +36,11 @@ const calibration = Rx.Observable
     .subscribe(result => calibrate(result[1]));
 
 tracker.throttleTime(1000).subscribe(trackables => socket.emit('trackables', trackables));
+
+
+const canvas = document.getElementById('canvas');
+const context = canvas.getContext('2d');
+
 
 function transformTrackables(rawData) {
     return rawData.map(trackable => transformer.transform(trackable));
@@ -67,24 +72,19 @@ function rawDataObservable(observer) {
             }
         }));
 
-        if (false) {
-            var canvas = document.getElementById('canvas');
-            var context = canvas.getContext('2d');
+        if (config.trackerShowRectangles) {
             context.clearRect(0, 0, canvas.width, canvas.height);
-
-            //context.fillRect(20,20,150,100);
 
             data.forEach(function(point) {
                 var rect = point.rectangle;
-
                 context.strokeStyle = 'white';
                 context.strokeRect(rect.x, rect.y, rect.width, rect.height);
                 context.font = '11px Helvetica';
                 context.fillStyle = "#fff";
-                context.fillText('x: ' + rect.x + 'px', rect.x + rect.width + 5, rect.y + 11);
-                context.fillText('y: ' + rect.y + 'px', rect.x + rect.width + 5, rect.y + 22);
+                context.fillText('color: ' + rect.color, rect.x + rect.width + 5, rect.y + 11);
+                context.fillText('x: ' + rect.x + 'px', rect.x + rect.width + 5, rect.y + 22);
+                context.fillText('y: ' + rect.y + 'px', rect.x + rect.width + 5, rect.y + 33);
             });
-
         }
 
 

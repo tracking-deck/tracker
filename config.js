@@ -6,4 +6,5 @@ export default {
     minDimension: 17,
     minGroupSize: 100,
     refColorCustom: "aa2c56", //rosa. Previous colors: ff4650, ff465a, ca566c, 9f172d,  c90000,
+    trackerShowRectangles: true
 }
