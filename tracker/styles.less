@@ -9,19 +9,6 @@ body {
     align-items: center;
     background-color: black;
 }
-.container {
-    position: relative;
-    height: 100%;
-    width: 100%;
-}
-.container,
-.container canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-}
 #video,
 #background {
     position: absolute;
@@ -29,16 +16,4 @@ body {
     left: 30px;
     height: 600px;
     width: 800px;
-}
-#video {
-    z-index: -2;
-}
-#background {
-    z-index: -1;
-}
-.hide-webcam {
-  background-color: black;
-}
-.show-webcam {
-	background-color: transparent;
 }
