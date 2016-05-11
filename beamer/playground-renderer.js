@@ -12,8 +12,8 @@ const markerSize = 60;
 
 class PlaygroundRenderer extends HTMLCanvasElement {
     createdCallback() {
-        this.width = config.canvasWidth;
-        this.height = config.canvasWidth / config.screenRatio;
+        this.width = config.playgroundWidth;
+        this.height = config.playgroundWidth / config.screenRatio;
         this.context = this.getContext('2d');
     }
 
