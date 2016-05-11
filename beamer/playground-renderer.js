@@ -3,8 +3,7 @@ import config from '../config';
 
 const colors = {
     outline: "pink",
-    marker: "black",
-    playgroundOutline: "blue",
+    marker: "pink",
     trackable: "white"
 };
 
@@ -46,7 +45,7 @@ class PlaygroundRenderer extends HTMLCanvasElement {
     renderTrackable(trackable) {
         this.context.beginPath();
         this.context.arc(trackable.x, trackable.y, 10, 0, 2 * Math.PI);
-        this.context.strokeStyle = colors.trackable;
+        this.context.strokeStyle = trackable.rectangle.color;
         this.context.lineWidth = 3;
         this.context.stroke();
     }
