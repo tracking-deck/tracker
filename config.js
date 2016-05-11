@@ -5,6 +5,5 @@ export default {
     deltaMax: 3500,
     minDimension: 17,
     minGroupSize: 100,
-    refColor1: "ff4650", //rosa. Previous colors: ff465a, ca566c, 9f172d,  c90000,
-    refColor2: "ffff3c" // yellow.
+    refColorCustom: "aa2c56", //rosa. Previous colors: ff4650, ff465a, ca566c, 9f172d,  c90000,
 }
