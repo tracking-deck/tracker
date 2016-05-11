@@ -4,7 +4,8 @@ import transformer from './transformer';
 import config from '../config';
 
 const colors = [
-    createColor('refColor', config.refColor)
+    createColor('refColor1', config.refColor1),
+    createColor('refColorYellow', config.refColor2)
 ];
 
 const rawData = Rx.Observable
@@ -34,21 +35,71 @@ function rawDataObservable(observer) {
         camera: true
     });
 
-    colors.forEach(c => {
-        registerColor(c.name, c.r, c.g, c.b);
-    });
+/*  colors.forEach(c => {  registerColor(c.name, c.r, c.g, c.b);  });*/
+    registerColorPurpleCopy(colors[0].name, colors[0].r, colors[0].g, colors[0].b);
+    registerColorYellow(colors[1].name, colors[1].r, colors[1].g, colors[1].b);
 
     colorTracker.setColors(colors.map(c => c.name));
+
     colorTracker.setMinDimension(config.minDimension);
     colorTracker.setMinGroupSize(config.minGroupSize);
 
     colorTracker.on('track', function(event) {
         const data = event.data.map(c => ({
             x: c.x + c.width / 2,
-            y: c.y + c.height / 2
+            y: c.y + c.height / 2,
+            rectangle: {
+                x: c.x,
+                y: c.y,
+                color: c.color,
+                width: c.width,
+                height: c.height,
+            }
         }));
 
         observer.next(data);
+    });
+}
+
+function createColor(name, hex) {
+    return {
+        "name": name,
+        "r": parseInt(hex.substring(0, 2), 16),
+        "g": parseInt(hex.substring(2, 4), 16),
+        "b": parseInt(hex.substring(4, 6), 16)
+    };
+}
+
+function registerColorPurpleCopy(name, r1, g1, b1) {
+    console.log("register color", r1, g1, b1);
+
+    tracking.ColorTracker.registerColor(name, function(r2, g2, b2) {
+
+        if ((b2 - g2) >= (b1 - g1) && (r2 - g2) >= (r1 - g1)) {
+            return true;
+        }
+
+        var dx = Math.abs(r2 - r1);
+        var dy = Math.abs(g2 - g1);
+        var dz = Math.abs(b2 - b1);
+        return dx * dx + dy * dy + dz * dz < config.deltaMax;
+    });
+}
+
+function registerColorYellow(name, r1, g1, b1) {
+    console.log("register color", r1, g1, b1);
+
+    tracking.ColorTracker.registerColor(name, function(r, g, b) {
+
+        var threshold = 50,
+            dx = r - 255,
+            dy = g - 255,
+            dz = b - 0;
+
+        if ((r - b) >= threshold && (g - b) >= threshold) {
+            return true;
+        }
+        return dx * dx + dy * dy + dz * dz < 10000;
     });
 }
 
@@ -63,30 +114,6 @@ function calibrate(rawData) {
             corners.bottomLeft.x, corners.bottomLeft.y
         ]);
     }
-}
-
-function createColor(name, hex) {
-    return {
-        "name": name,
-        "r": parseInt(hex.substring(0, 2), 16),
-        "g": parseInt(hex.substring(2, 4), 16),
-        "b": parseInt(hex.substring(4, 6), 16)
-    };
-}
-
-function registerColor(name, r1, g1, b1) {
-    console.log("register color", r1, g1, b1);
-
-    tracking.ColorTracker.registerColor(name, function(r2, g2, b2) {
-        if ((b2 - g2) >= (b1 - g1) && (r2 - g2) >= (r1 - g1)) {
-            return true;
-        }
-
-        var dx = Math.abs(r2 - r1);
-        var dy = Math.abs(g2 - g1);
-        var dz = Math.abs(b2 - b1);
-        return dx * dx + dy * dy + dz * dz < config.deltaMax;
-    });
 }
 
 function calculateCorners(data) {

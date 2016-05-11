@@ -7,21 +7,25 @@ class Transformer {
     }
 
     updatePerspective(srcCorners) {
-
-            console.log('updatePerspective', srcCorners, this.dstCorners);
-            this.perspT = PerspT(srcCorners, this.dstCorners);
+        console.log('updatePerspective', srcCorners, this.dstCorners);
+        this.perspT = PerspT(srcCorners, this.dstCorners);
 
     }
 
-    transform({x, y}) {
+    transform({x, y, rectangle}) {
         if (!this.perspT) {
-            return {x: x, y: y};
+            return {
+                x: x,
+                y: y,
+                rectangle: rectangle,
+            };
         }
 
-        const result = this.perspT.transform(x, y);
+        const result = this.perspT.transform(x, y, rectangle);
         return {
             x: result[0],
             y: result[1],
+            rectangle: rectangle,
         };
     }
 }
