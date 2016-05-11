@@ -1,8 +1,9 @@
 import { setColor } from './adminService';
 
 class CustomColorEditor extends HTMLElement {
-	createdCallback() {
+	attachedCallback() {
 		this.colorName = this.attributes['color-name'] ? this.attributes['color-name'].value : '';
+		this.defaultColor = this.attributes['default-color'] ? this.attributes['default-color'].value : '';
 		this.addEventListener('keyup', e => this.onTextEnter(e));
 		this.render();
 	}
@@ -23,7 +24,7 @@ class CustomColorEditor extends HTMLElement {
 			<section>
 				<span>${this.colorName}</span>
 				<span>#</span>
-				<input type="text">
+				<input type="text" value="${this.defaultColor}">
 			</section>
 		`;
 	}

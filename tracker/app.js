@@ -1,15 +1,12 @@
 console.clear();
 import './styles.less'
-import { tracker, createColor, registerColorCustomFunction } from './tracker';
-import * as t from './transformer';
-import io from 'socket.io-client';
-import config from '../config';
+import './tracker';
 
 
-let socket = io.connect(config.busAddress);
-tracker.throttleTime(1000).subscribe(trackables => socket.emit('trackables', trackables));
+Rx.Observable
+	.fromEvent(socket, 'configUpdate')
 
-socket.on('configChange', change => {
+socket.on('configUpdate', change => {
 	if (change.type === 'color') {
 		let newColor = createColor(change.name, change.color);
 		registerColorCustomFunction(newColor.name, newColor.r, newColor.g, newColor.b);
