@@ -1,4 +1,5 @@
 import CustomColorEditor from './customColorEditor';
+import CommandsLog from './commandsLog';
 import config from '../config';
 
 const colorEditors = [];
