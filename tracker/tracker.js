@@ -4,7 +4,8 @@ import transformer from './transformer';
 import config from '../config';
 
 const colors = [
-    createColor('refColor', config.refColor)
+    createColor('refColor1', config.refColor1),
+    createColor('refColor2', config.refColor2)
 ];
 
 const rawData = Rx.Observable
@@ -44,25 +45,28 @@ function rawDataObservable(observer) {
 
     colorTracker.on('track', function(event) {
         const data = event.data.map(c => ({
+            color: c.color,
             x: c.x + c.width / 2,
-            y: c.y + c.height / 2
+            y: c.y + c.height / 2,
+            rectangle: {
+                    x: c.x,
+                    y: c.y,
+                    width: c.width,
+                    height: c.height,
+            }
         }));
+
+/*
+        data.forEach(function(r) {
+            console.log(r);
+        });
+
+        event.data.forEach(function(rect) {
+            console.log(rect.x, rect.y, rect.height, rect.width, rect.color);
+        });*/
 
         observer.next(data);
     });
-}
-
-function calibrate(rawData) {
-    const corners = calculateCorners(rawData);
-
-    if (corners) {
-        transformer.updatePerspective([
-            corners.topLeft.x, corners.topLeft.y,
-            corners.topRight.x, corners.topRight.y,
-            corners.bottomRight.x, corners.bottomRight.y,
-            corners.bottomLeft.x, corners.bottomLeft.y
-        ]);
-    }
 }
 
 function createColor(name, hex) {
@@ -87,6 +91,19 @@ function registerColor(name, r1, g1, b1) {
         var dz = Math.abs(b2 - b1);
         return dx * dx + dy * dy + dz * dz < config.deltaMax;
     });
+}
+
+function calibrate(rawData) {
+    const corners = calculateCorners(rawData);
+
+    if (corners) {
+        transformer.updatePerspective([
+            corners.topLeft.x, corners.topLeft.y,
+            corners.topRight.x, corners.topRight.y,
+            corners.bottomRight.x, corners.bottomRight.y,
+            corners.bottomLeft.x, corners.bottomLeft.y
+        ]);
+    }
 }
 
 function calculateCorners(data) {
