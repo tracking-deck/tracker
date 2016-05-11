@@ -45,6 +45,6 @@ function transformTrackables(rawData) {
 
 function configChange(change) {
     if (change.type === 'color') {
-        registerColorCustomFunction(newColor.name, change.color);
+        registerColorCustomFunction(change.name, change.color);
     }
 }
