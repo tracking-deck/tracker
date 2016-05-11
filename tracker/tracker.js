@@ -4,8 +4,7 @@ import transformer from './transformer';
 import config from '../config';
 
 const colors = [
-    createColor('refColor1', config.refColor1),
-    createColor('refColorYellow', config.refColor2)
+    createColor('custom', config.refColorCustom)
 ];
 
 const rawData = Rx.Observable
@@ -35,11 +34,8 @@ function rawDataObservable(observer) {
         camera: true
     });
 
-/*  colors.forEach(c => {  registerColor(c.name, c.r, c.g, c.b);  });*/
-    registerColorPurpleCopy(colors[0].name, colors[0].r, colors[0].g, colors[0].b);
-    registerColorYellow(colors[1].name, colors[1].r, colors[1].g, colors[1].b);
-
-    colorTracker.setColors(colors.map(c => c.name));
+    registerColorCustomFunction('custom', colors[0].r, colors[0].g, colors[0].b);
+    colorTracker.setColors(['custom', 'yellow']);
 
     colorTracker.setMinDimension(config.minDimension);
     colorTracker.setMinGroupSize(config.minGroupSize);
@@ -70,37 +66,39 @@ function createColor(name, hex) {
     };
 }
 
-function registerColorPurpleCopy(name, r1, g1, b1) {
+function registerColorCustomFunction(name, r1, g1, b1) {
     console.log("register color", r1, g1, b1);
 
-    tracking.ColorTracker.registerColor(name, function(r2, g2, b2) {
+    var colorTotal = r1 + g1 + b1;
+    if (colorTotal === 0) {
+        tracking.ColorTracker.registerColor('custom', function(r, g, b) {
+            return r + g + b < 10;
+        });
+    } else {
+        var rRatio = r1 / colorTotal;
+        var gRatio = g1 / colorTotal;
 
-        if ((b2 - g2) >= (b1 - g1) && (r2 - g2) >= (r1 - g1)) {
-            return true;
-        }
+        tracking.ColorTracker.registerColor(name, function(r, g, b) {
+            var colorTotal2 = r + g + b;
 
-        var dx = Math.abs(r2 - r1);
-        var dy = Math.abs(g2 - g1);
-        var dz = Math.abs(b2 - b1);
-        return dx * dx + dy * dy + dz * dz < config.deltaMax;
-    });
-}
+            if (colorTotal2 === 0) {
+                if (colorTotal < 10) {
+                    return true;
+                }
+                return false;
+            }
 
-function registerColorYellow(name, r1, g1, b1) {
-    console.log("register color", r1, g1, b1);
+            var rRatio2 = r / colorTotal2,
+                gRatio2 = g / colorTotal2,
+                deltaColorTotal = colorTotal / colorTotal2,
+                deltaR = rRatio / rRatio2,
+                deltaG = gRatio / gRatio2;
 
-    tracking.ColorTracker.registerColor(name, function(r, g, b) {
-
-        var threshold = 50,
-            dx = r - 255,
-            dy = g - 255,
-            dz = b - 0;
-
-        if ((r - b) >= threshold && (g - b) >= threshold) {
-            return true;
-        }
-        return dx * dx + dy * dy + dz * dz < 10000;
-    });
+            return deltaColorTotal > 0.9 && deltaColorTotal < 1.1 &&
+                deltaR > 0.9 && deltaR < 1.1 &&
+                deltaG > 0.9 && deltaG < 1.1;
+        });
+    }
 }
 
 function calibrate(rawData) {
