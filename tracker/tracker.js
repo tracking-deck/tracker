@@ -152,7 +152,9 @@ function calculateCorners(data) {
 }
 
 export {
-    tracker
+    tracker,
+    registerColorCustomFunction,
+    createColor
 }
 
 /*
