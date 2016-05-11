@@ -9,7 +9,7 @@ io.on('connection', socket => {
 
     socket.on('command', msg => socket.broadcast.emit('command', msg));
     
-    socket.on('configChange', msg => socket.broadcast.emit('configChange', msg));
+    socket.on('configUpdate', msg => socket.broadcast.emit('configUpdate', msg));
 
     socket.on('trackables', msg => {
         console.log('# of points: ', msg.length);

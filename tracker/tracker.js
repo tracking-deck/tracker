@@ -2,6 +2,9 @@ import Rx from '@reactivex/rxjs/dist/cjs/Rx';
 import * as tracking from 'tracking';
 import transformer from './transformer';
 import config from '../config';
+import io from 'socket.io-client';
+
+let socket = io.connect(config.busAddress);
 
 const colors = [
     createColor('custom', config.refColorCustom)
@@ -18,10 +21,20 @@ const keypress = Rx.Observable
 const delayedStartup = Rx.Observable
     .interval(1000)
     .take(1);
+const configUpdates = Rx.Observable
+	.fromEvent(socket, 'configUpdate')
+    .do(change => {
+        if (change.type === 'color') {
+            let newColor = createColor(change.name, change.color);
+            registerColorCustomFunction(newColor.name, newColor.r, newColor.g, newColor.b);
+        }
+    });
 const calibration = Rx.Observable
-    .merge(keypress, delayedStartup)
+    .merge(keypress, delayedStartup, configUpdates)
     .withLatestFrom(rawData)
     .subscribe(result => calibrate(result[1]));
+
+tracker.throttleTime(1000).subscribe(trackables => socket.emit('trackables', trackables));
 
 function transformTrackables(rawData) {
     return rawData.map(trackable => transformer.transform(trackable));
@@ -174,6 +187,7 @@ function calculateCorners(data) {
 
 export {
     tracker,
+    rawData,
     registerColorCustomFunction,
     createColor
 }
