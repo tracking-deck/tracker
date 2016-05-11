@@ -3,7 +3,7 @@ import config from '../config';
 
 class Transformer {
     constructor() {
-        this.dstCorners = [0, 0, config.canvasWidth, 0, config.canvasWidth, config.canvasWidth / config.screenRatio, 0, config.canvasWidth / config.screenRatio];
+        this.dstCorners = [0, 0, config.playgroundWidth, 0, config.playgroundWidth, config.playgroundWidth / config.screenRatio, 0, config.playgroundWidth / config.screenRatio];
     }
 
     calibrate(rawData) {
@@ -25,11 +25,7 @@ class Transformer {
 
     transform({x, y, rectangle}) {
         if (!this.perspT) {
-            return {
-                x: x,
-                y: y,
-                rectangle: rectangle,
-            };
+            return {x, y, rectangle};
         }
 
         const result = this.perspT.transform(x, y, rectangle);
