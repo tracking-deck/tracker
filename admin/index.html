@@ -2,12 +2,29 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 	<title>Admin</title>
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/css/materialize.min.css">
 </head>
 <body>
-	<h1>Admin</h1>
-	<div class="color-editors"></div>
-	
+    <div class="container">
+        <h1 class="center-align">Tracker Admin</h1>
+    </div>
+    <div class="container">
+        <div class="row">
+         <div class="col s6">
+             <h5>Settings</h5>
+             <button type="button" name="applyAll">Apply all</button>
+             <div class="color-editors"></div>
+         </div>
+         <div class="col s6">
+             <h5>Commands</h5>
+             <commands-log></commands-log>
+         </div>
+       </div>
+    </div>
+
 	<script src="admin.bundle.js"></script>
 </body>
 </html>

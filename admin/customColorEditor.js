@@ -4,21 +4,21 @@ class CustomColorEditor extends HTMLElement {
 	attachedCallback() {
 		this.colorName = this.attributes['color-name'] ? this.attributes['color-name'].value : '';
 		this.defaultColor = this.attributes['default-color'] ? this.attributes['default-color'].value : '';
-		this.addEventListener('keyup', e => this.onTextEnter(e));
+		this.addEventListener('keyup', () => this.setCurrentColor());
 		this.render();
 	}
-	
-	onTextEnter(e) {
+
+	setCurrentColor() {
 		const color = this.querySelector('input').value;
 		if (this.isValid(color)) {
 			setColor(this.colorName, color);
 		}
 	}
-	
+
 	isValid(color) {
 		return color.length === 6;
 	}
-	
+
 	render() {
 		this.innerHTML = `
 			<section>
