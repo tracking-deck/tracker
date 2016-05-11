@@ -2,6 +2,8 @@ var express = require('express');
 var http = require('http').Server(express);
 var io = require('socket.io')(http);
 
+const listenPort = 3000;
+
 io.on('connection', socket => {
     console.log("connected.");
 
@@ -13,4 +15,4 @@ io.on('connection', socket => {
     })
 });
 
-http.listen(3000, () => console.log("bus started on port 3000"));
+http.listen(listenPort, () => console.log("bus started on port " + listenPort));
