@@ -36,8 +36,8 @@ const calibration = Rx.Observable
     .withLatestFrom(rawData);
 
 calibration.subscribe(result => transformer.calibrate(result[1]));
-tracker.throttleTime(1000).subscribe(trackables => socket.emit('trackables', trackables));
-rawData.throttleTime(100).subscribe(points => overlay.render(points));
+tracker.subscribe(trackables => socket.emit('trackables', trackables));
+rawData.subscribe(points => overlay.render(points));
 
 function transformTrackables(rawData) {
     return rawData.map(trackable => transformer.transform(trackable));

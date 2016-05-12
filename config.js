@@ -1,5 +1,5 @@
 export default {
-    busAddress: 'http://localhost:3000',//'http://10.0.0.196:3000',
+    busAddress: 'http://10.0.0.122:3000',//'http://10.0.0.196:3000',
     screenRatio: 4/3,
     playgroundWidth: 1000,
     videoWidth: 800,
