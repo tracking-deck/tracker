@@ -5,6 +5,7 @@ import config from '../config';
 const socket = io.connect(config.busAddress);
 
 export const command = Rx.Observable.fromEvent(socket, 'command');
+export const trackables = Rx.Observable.fromEvent(socket, 'trackables');
 
 export function setColor(name, color) {
 	socket.emit('configUpdate', {

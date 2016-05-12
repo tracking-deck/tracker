@@ -1,5 +1,6 @@
 import CustomColorEditor from './customColorEditor';
-import CommandsLog from './commandsLog';
+import './commandsLog';
+import './trackableInfo';
 import config from '../config';
 
 const colorEditors = [];

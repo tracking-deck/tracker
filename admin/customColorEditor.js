@@ -22,9 +22,8 @@ class CustomColorEditor extends HTMLElement {
 	render() {
 		this.innerHTML = `
 			<section>
-				<span>${this.colorName}</span>
-				<span>#</span>
-				<input type="text" value="${this.defaultColor}">
+                <label for="color_${this.colorName}">${this.colorName}</label>
+				<input type="text" id="color_${this.colorName}" value="${this.defaultColor}">
 			</section>
 		`;
 	}
