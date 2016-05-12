@@ -27,16 +27,27 @@ Rx.Observable
     .filter(e => e.code === 'ArrowDown')
     .subscribe(e => socket.emit('command', { target: 'lego-ev3', command: 'stop' }));
 
-const trackables = Rx.Observable
-    .fromEvent(socket, 'trackables')
-    .throttleTime(1500)
+const virtualTrackables = Rx.Observable.fromEvent(socket, 'virtual-trackables').startWith([]);
+const trackables = Rx.Observable.fromEvent(socket, 'trackables').startWith([]);
+
+Rx.Observable.interval(1500)
+    .withLatestFrom(trackables)
+    .withLatestFrom(virtualTrackables)
+    .map(result => {
+        return {
+            trackables: result[0][1],
+            virtualTrackables: result[1]
+        };
+    })
     .subscribe(msg => {
         let dest = {
             x: 500,
             y: 500
         }
 
-        let purples = msg.filter(t => t.rectangle.color === 'custom');
+        // real world dest:
+        /*
+        let purples = msg.trackables.filter(t => t.rectangle.color === 'custom');
         if (purples.length === 5) {
             let corners = calculateCorners(purples);
             let others = filterCorners(purples, corners);
@@ -45,9 +56,17 @@ const trackables = Rx.Observable
                 dest.y = others[0].y;
                 console.log(`dest ${dest.x},${dest.y}`);
             }
+        }*/
+
+        // virtual world dest:
+        if (msg.virtualTrackables.length === 1) {
+            dest.x = msg.virtualTrackables[0].x;
+            dest.y = msg.virtualTrackables[0].y;
+            console.log(`dest ${dest.x},${dest.y}`);
         }
 
-        let yellows = msg.filter(t => t.rectangle.color === 'yellow');
+
+        let yellows = msg.trackables.filter(t => t.rectangle.color === 'yellow');
         if (yellows.length === 3) {
             let d1 = distance(yellows[0], yellows[1]);
             let d2 = distance(yellows[1], yellows[2]);

@@ -15,7 +15,9 @@ io.on('connection', socket => {
         console.log('# of points: ', msg.length);
         console.log(msg);
         socket.broadcast.emit('trackables', msg);
-    })
+    });
+      
+    socket.on('virtual-trackables', msg => socket.broadcast.emit('virtual-trackables', msg));
 });
 
 http.listen(listenPort, () => console.log("bus started on port " + listenPort));

@@ -10,4 +10,17 @@ document.querySelector('.container')
 
 const socket = io.connect(config.busAddress);
 
-playgroundRenderer.subscribeTo(Rx.Observable.fromEvent(socket, 'trackables'));
+let trackables = Rx.Observable.fromEvent(socket, 'trackables').startWith([]);
+let virtualTrackables = Rx.Observable.fromEvent(socket, 'virtual-trackables').startWith([]);
+
+let beamer = Rx.Observable.interval(1000/25)
+ .withLatestFrom(trackables)
+ .withLatestFrom(virtualTrackables)
+ .map(result => { 
+     return { 
+         trackables: result[0][1], 
+         virtualTrackables: result[1] 
+     };
+ });
+
+playgroundRenderer.subscribeTo(beamer);

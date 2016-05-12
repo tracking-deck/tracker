@@ -4,7 +4,8 @@ import config from '../config';
 const colors = {
     outline: "pink",
     marker: "pink",
-    trackable: "white"
+    trackable: "white",
+    virtual: "blue"
 };
 
 const outlineWidth = 10;
@@ -19,7 +20,10 @@ class PlaygroundRenderer extends HTMLCanvasElement {
 
     subscribeTo(observable) {
         observable.subscribe({
-            next: trackables => this.renderPlayground(trackables)
+            next: event => {
+                let allTrackables = event.trackables.concat(event.virtualTrackables);
+                this.renderPlayground(allTrackables);
+            }
         });
     }
 
@@ -47,6 +51,11 @@ class PlaygroundRenderer extends HTMLCanvasElement {
         if (trackable.rectangle.color === 'custom') {
             this.context.arc(trackable.x, trackable.y, 10, 0, 2 * Math.PI);
             this.context.strokeStyle = colors.marker;
+        } else if (trackable.rectangle.color === 'blue') {
+            let rectWith = 100;
+            let rectHeight = 50;
+            this.context.fillStyle = colors.virtual;
+            this.context.fillRect(trackable.x - rectWith/2, trackable.y - rectHeight/2,rectWith,rectHeight);
         } else {
             this.context.arc(trackable.x, trackable.y, 100, 0, 2 * Math.PI);
             this.context.strokeStyle = trackable.rectangle.color;
