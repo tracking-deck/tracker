@@ -28,7 +28,7 @@ class PlaygroundRenderer extends HTMLCanvasElement {
     }
 
     renderPlayground(trackables) {
-        console.log("render", trackables);
+        // console.log("render", trackables);
         this.context.clearRect(0, 0, this.width, this.height);
         this.drawOutline();
         trackables.forEach(i => this.renderTrackable(i));
