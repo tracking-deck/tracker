@@ -30,7 +30,7 @@ Rx.Observable
 const virtualTrackables = Rx.Observable.fromEvent(socket, 'virtual-trackables').startWith([]);
 const trackables = Rx.Observable.fromEvent(socket, 'trackables').startWith([]);
 
-Rx.Observable.interval(1500)
+Rx.Observable.interval(3500)
     .withLatestFrom(trackables)
     .withLatestFrom(virtualTrackables)
     .map(result => {
@@ -96,7 +96,7 @@ Rx.Observable.interval(1500)
             let angle = rad2deg(angleBetween(front, midpoint, dest));
             console.log(`angle: ${angle}`);
             let destLeft = isLeft(front, midpoint, dest);
-            console.log(`isLeft: ${isLeft}`);
+            console.log(`isLeft: ${destLeft}`);
 
             console.log('distance:' + distance(front, dest));
             if (distance(front, dest) > 100) {
@@ -105,10 +105,10 @@ Rx.Observable.interval(1500)
                     socket.emit('command', { target: 'lego-ev3', command: 'straight' });
                     setTimeout(function () {
                         socket.emit('command', { target: 'lego-ev3', command: 'stop' });
-                    }, 1500);
+                    }, 1000);
                 } else {
                     // rover turn
-                    let time = Math.max(50, Math.floor(Math.abs(angle) / 10) * 100);
+                    let time = Math.min(1000,Math.max(50, Math.floor(Math.abs(angle) / 10) * 75));
                     console.log(`turn ${time}ms`);
 
                     if (destLeft) {

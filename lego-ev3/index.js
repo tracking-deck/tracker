@@ -1,5 +1,5 @@
 var ev3dev = require('ev3dev-lang');
-var socket = require('socket.io-client')('http://10.0.0.196:3000');
+var socket = require('socket.io-client')('http://10.0.0.122:3000');
 
 // npm install ev3dev-lang socket.io-client
 // node index.js
